@@ -11,8 +11,13 @@ import GoogleSignIn
 import GoogleSignInSwift
 
 struct LoginView: View {
-    @State private var isLoggedIn = false
-    @State private var email = ""
+    @StateObject private var viewModel = LoginViewModel(
+        signInWithGoogleUseCase: SignInWithGoogleUseCase(
+            authRepository: AuthRepository(
+                googleSignInService: GoogleSignInService()
+            )
+        )
+    )
     
     var body: some View {
         NavigationStack {
@@ -36,7 +41,7 @@ struct LoginView: View {
                     Spacer()
                     
                     VStack(spacing: 16) {
-                        TextField("email@domain.com", text: $email)
+                        TextField("email@domain.com", text: $viewModel.email)
                             .textFieldStyle(PlainTextFieldStyle())
                             .padding()
                             .background(Color.white)
@@ -48,7 +53,7 @@ struct LoginView: View {
                             .padding(.horizontal, 20)
                         
                         Button(action: {
-                            isLoggedIn = true
+                            viewModel.continueWithEmail()
                         }) {
                             Text("계속")
                                 .font(.headline)
@@ -67,19 +72,8 @@ struct LoginView: View {
                             .padding(.vertical, 8)
                         
                         GoogleSignInButton(action: {
-                            guard let presentingViewController = UIApplication.shared.connectedScenes
-                                .compactMap({ $0 as? UIWindowScene })
-                                .flatMap({ $0.windows })
-                                .first(where: { $0.isKeyWindow })?.rootViewController else { return }
-                            
                             Task {
-                                do {
-                                    let result = try await GIDSignIn.sharedInstance.signIn(withPresenting: presentingViewController)
-                                    let user = result.user
-                                    isLoggedIn = true
-                                } catch {
-                                    print("\(error.localizedDescription)")
-                                }
+                                await viewModel.signInWithGoogle()
                             }
                         })
                         .frame(height: 50)
@@ -93,12 +87,13 @@ struct LoginView: View {
                             onCompletion: { result in
                                 switch result {
                                 case .success(let authorization):
+                                    viewModel.signInWithApple()
                                     if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
                                         let userIdentifier = appleIDCredential.user
                                         let fullName = appleIDCredential.fullName
                                         let email = appleIDCredential.email
                                         
-                                        isLoggedIn = true
+                                        viewModel.isLoggedIn = true
                                     }
                                 case .failure(let error):
                                     print("\(error.localizedDescription)")
@@ -121,7 +116,7 @@ struct LoginView: View {
                         .padding(.bottom, 20)
                 }
             }
-            .navigationDestination(isPresented: $isLoggedIn) {
+            .navigationDestination(isPresented: $viewModel.isLoggedIn) {
                 MainView()
             }
         }

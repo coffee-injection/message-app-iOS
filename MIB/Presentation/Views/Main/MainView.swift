@@ -8,8 +8,7 @@
 import SwiftUI
 
 struct MainView: View {
-    @State private var showingBookmark = false
-    @State private var showingProfile = false
+    @StateObject private var viewModel = MainViewModel()
     
     var body: some View {
         NavigationStack {
@@ -18,7 +17,7 @@ struct MainView: View {
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
                         Button(action: {
-                            showingBookmark = true
+                            viewModel.showBookmark()
                         }) {
                             Image(systemName: "bookmark")
                                 .foregroundStyle(.black)
@@ -27,7 +26,7 @@ struct MainView: View {
                     
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button(action: {
-                            showingProfile = true
+                            viewModel.showProfile()
                         }) {
                             Image(systemName: "person")
                                 .foregroundStyle(.black)
@@ -37,10 +36,10 @@ struct MainView: View {
                 .navigationBarBackButtonHidden(true)
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbarBackground(.visible, for: .navigationBar)
-                .sheet(isPresented: $showingBookmark) {
+                .sheet(isPresented: $viewModel.showingBookmark) {
                     BookmarkView()
                 }
-                .sheet(isPresented: $showingProfile) {
+                .sheet(isPresented: $viewModel.showingProfile) {
                     ProfileView()
                 }
         }
@@ -49,5 +48,4 @@ struct MainView: View {
 
 #Preview {
     MainView()
-        .modelContainer(for: Item.self, inMemory: true)
 }
