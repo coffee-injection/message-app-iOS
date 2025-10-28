@@ -22,7 +22,7 @@ struct LoginView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color(red: 0.95, green: 0.97, blue: 1.0)
+                Color("navy_main")
                     .ignoresSafeArea()
                 
                 VStack(spacing: 24) {
@@ -31,11 +31,11 @@ struct LoginView: View {
                    Text("계정 만들기")
                         .font(.largeTitle)
                         .fontWeight(.bold)
-                        .foregroundColor(.black)
+                        .foregroundColor(.white)
                     
                     Text("앱 가입하세요")
                         .font(.body)
-                        .foregroundColor(.black)
+                        .foregroundColor(.white)
                         .multilineTextAlignment(.center)
                     
                     Spacer()
@@ -43,6 +43,10 @@ struct LoginView: View {
                     VStack(spacing: 16) {
                         TextField("email@domain.com", text: $viewModel.email)
                             .textFieldStyle(PlainTextFieldStyle())
+                            .keyboardType(.emailAddress)
+                            .autocapitalization(.none)
+                            .disableAutocorrection(true)
+                            .foregroundColor(.black)
                             .padding()
                             .background(Color.white)
                             .cornerRadius(12)
@@ -61,22 +65,45 @@ struct LoginView: View {
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
                                 .frame(height: 50)
-                                .background(Color.black)
+                                .background(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [Color("navy_1"), Color("navy_2")]),
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
+                                )
                                 .cornerRadius(12)
                                 .padding(.horizontal, 20)
                         }
                         
-                        Text("또는")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                            .padding(.vertical, 8)
+                        HStack {
+                            Rectangle()
+                                .fill(Color.gray.opacity(0.5))
+                                .frame(height: 1)
+                            
+                            Text("또는")
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                                .padding(.horizontal, 16)
+                            
+                            Rectangle()
+                                .fill(Color.gray.opacity(0.5))
+                                .frame(height: 1)
+                        }
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 8)
                         
-                        GoogleSignInButton(action: {
-                            Task {
-                                await viewModel.signInWithGoogle()
+                        GoogleSignInButton(
+                            scheme: .light,
+                            style: .wide,
+                            state: .normal,
+                            action: {
+                                Task {
+                                    await viewModel.signInWithGoogle()
+                                }
                             }
-                        })
-                        .frame(height: 50)
+                        )
+                        .frame(height: 40)
                         .cornerRadius(12)
                         .padding(.horizontal, 20)
                         
@@ -85,23 +112,11 @@ struct LoginView: View {
                                 request.requestedScopes = [.fullName, .email]
                             },
                             onCompletion: { result in
-                                switch result {
-                                case .success(let authorization):
-                                    viewModel.signInWithApple()
-                                    if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
-                                        let userIdentifier = appleIDCredential.user
-                                        let fullName = appleIDCredential.fullName
-                                        let email = appleIDCredential.email
-                                        
-                                        viewModel.isLoggedIn = true
-                                    }
-                                case .failure(let error):
-                                    print("\(error.localizedDescription)")
-                                }
+                                viewModel.signInWithApple(result: result)
                             }
                         )
                         .signInWithAppleButtonStyle(.white)
-                        .frame(height: 50)
+                        .frame(height: 40)
                         .cornerRadius(12)
                         .padding(.horizontal, 20)
                     }
@@ -119,8 +134,10 @@ struct LoginView: View {
             .navigationDestination(isPresented: $viewModel.isLoggedIn) {
                 MainView()
             }
+            .toolbarBackground(Color("navy_main"), for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
         }
-    }
+    }    
 }
 
 #Preview {
