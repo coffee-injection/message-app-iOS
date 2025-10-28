@@ -28,7 +28,7 @@ struct LoginView: View {
                 VStack(spacing: 24) {
                     Spacer()
                     
-                   Text("계정 만들기")
+                    Text("계정 만들기")
                         .font(.largeTitle)
                         .fontWeight(.bold)
                         .foregroundColor(.white)
@@ -135,9 +135,8 @@ struct LoginView: View {
                 MainView()
             }
             .toolbarBackground(Color("navy_main"), for: .navigationBar)
-            .toolbarBackground(.visible, for: .navigationBar)
         }
-    }    
+    }
 }
 
 #Preview {
