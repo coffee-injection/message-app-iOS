@@ -12,7 +12,9 @@ struct MainView: View {
     
     var body: some View {
         NavigationStack {
-            Color(.blue)
+            Image("main_background")
+                .resizable()
+                .aspectRatio(contentMode: .fill)
                 .ignoresSafeArea()
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {

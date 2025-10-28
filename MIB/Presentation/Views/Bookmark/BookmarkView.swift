@@ -27,7 +27,9 @@ struct BookmarkView: View {
                                 LetterCardView(
                                     letter: letter,
                                     onDelete: {
-                                        viewModel.deleteLetter(id: letter.id)
+                                        Task {
+                                            await viewModel.deleteLetter(id: letter.id)
+                                        }
                                     }
                                 )
                             }

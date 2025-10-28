@@ -16,6 +16,7 @@ struct LetterDTO: Codable {
     let matchedAt: String?
     let readAt: String?
     let createdAt: String
+    let isBookmarked: Bool?
     
     func toDomain() -> Letter {
         return Letter(
@@ -47,7 +48,8 @@ extension Letter {
             receiver: receiver.map { MemberDTO(id: 0, nickname: $0, email: "") },
             matchedAt: matchedAt?.toISO8601String(),
             readAt: readAt?.toISO8601String(),
-            createdAt: createdAt.toISO8601String()
+            createdAt: createdAt.toISO8601String(),
+            isBookmarked: nil
         )
     }
 }

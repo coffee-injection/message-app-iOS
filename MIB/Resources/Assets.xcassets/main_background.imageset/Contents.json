@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "bg_home.png",
+      "filename" : "main_background.png",
       "idiom" : "universal",
       "scale" : "1x"
     },

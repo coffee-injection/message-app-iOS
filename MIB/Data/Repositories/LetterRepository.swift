@@ -24,6 +24,11 @@ class LetterRepository: LetterRepositoryProtocol {
         return letterDTOs.map { $0.toDomain() }
     }
     
+    func getBookmarkedLetters() async throws -> [Letter] {
+        let letterDTOs = try await apiService.getLetterList()
+        return letterDTOs.filter { $0.isBookmarked == true }.map { $0.toDomain() }
+    }
+    
     func getLetter(id: String) async throws -> Letter {
         let letterDTO = try await apiService.getLetterDetail()
         return letterDTO.toDomain()
@@ -40,6 +45,10 @@ class LetterRepository: LetterRepositoryProtocol {
     
     func bookmarkLetter(id: String) async throws {
         try await apiService.bookmarkLetter()
+    }
+    
+    func unbookmarkLetter(id: String) async throws {
+        // 협의?
     }
     
     func deleteLetter(id: String) async throws {
