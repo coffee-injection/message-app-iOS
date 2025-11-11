@@ -14,6 +14,10 @@ class MainViewModel: ObservableObject {
     @Published var showingProfile = false
     @Published var showingMessage = false
     @Published var selectedMessage = ""
+    @Published var showingWriteLetter = false
+    
+    var profileImageUrl: String? = nil
+    var islandName: String = "아보카도섬"
     
     let bottles = [
         BottleData(id: 1, message: "메시지 1")
@@ -38,6 +42,16 @@ class MainViewModel: ObservableObject {
     func closeMessage() {
         print("메시지 닫기")
         showingMessage = false
+    }
+    
+    func showWriteLetter() {
+        print("글쓰기 버튼 클릭")
+        showingWriteLetter = true
+    }
+    
+    func closeWriteLetter() {
+        print("글쓰기 뷰 닫기")
+        showingWriteLetter = false
     }
 }
 

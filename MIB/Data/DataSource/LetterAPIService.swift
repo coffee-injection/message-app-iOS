@@ -8,17 +8,16 @@
 import Foundation
 
 class LetterAPIService {
-    private let baseURL = ""
     private let session = URLSession.shared
     
     func getLetterList() async throws -> [LetterDTO] {
-        let url = URL(string: "\(baseURL)/letter/list")!
+        let url = URL(string: APIConfiguration.Letter.list)!
         let (data, _) = try await session.data(from: url)
         return try JSONDecoder().decode([LetterDTO].self, from: data)
     }
     
     func sendLetter(content: String) async throws -> LetterDTO {
-        let url = URL(string: "\(baseURL)/letter/send")!
+        let url = URL(string: APIConfiguration.Letter.send)!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -31,13 +30,13 @@ class LetterAPIService {
     }
     
     func getLetterDetail() async throws -> LetterDTO {
-        let url = URL(string: "\(baseURL)/letter/detail")!
+        let url = URL(string: APIConfiguration.Letter.detail)!
         let (data, _) = try await session.data(from: url)
         return try JSONDecoder().decode(LetterDTO.self, from: data)
     }
     
     func bookmarkLetter() async throws {
-        let url = URL(string: "\(baseURL)/letter/book-mark")!
+        let url = URL(string: APIConfiguration.Letter.bookmark)!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         
