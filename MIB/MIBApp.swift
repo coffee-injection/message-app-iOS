@@ -9,17 +9,16 @@ import SwiftUI
 
 @main
 struct MIBApp: App {
-    private let kakaoAuthService = KakaoAuthService(
-        apiService: KakaoAuthAPIService()
-    )
+    @StateObject private var appState = AppState.shared
     
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(appState)
                 .onOpenURL { url in
                     if url.scheme == "mib" || url.host == "localhost" {
                         Task {
-                            await kakaoAuthService.handleKakaoCallback(url: url)
+                            await appState.handleKakaoCallback(url: url)
                         }
                     }
                 }

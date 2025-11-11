@@ -41,6 +41,26 @@ class KakaoAuthService {
         }
     }
     
+    func signIn() async throws -> AuthResult {
+        try await withCheckedThrowingContinuation { continuation in
+            Task {
+                do {
+                    self.onKakaoLoginComplete = { result in
+                        switch result {
+                        case .success(let authResult):
+                            continuation.resume(returning: authResult)
+                        case .failure(let error):
+                            continuation.resume(throwing: error)
+                        }
+                    }
+                    try await self.startKakaoLogin()
+                } catch {
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
+    
     func handleKakaoCallback(url: URL) async {
         await MainActor.run {
             safariViewController?.dismiss(animated: true)
