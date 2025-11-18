@@ -34,9 +34,22 @@
 		7041E3A92E7E98A000C4DECF /* MIBUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MIBUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		4F4208802EC372BE00177BFD /* Exceptions for "MIB" folder in "MIB" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 7041E38C2E7E989F00C4DECF /* MIB */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		7041E38F2E7E989F00C4DECF /* MIB */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				4F4208802EC372BE00177BFD /* Exceptions for "MIB" folder in "MIB" target */,
+			);
 			path = MIB;
 			sourceTree = "<group>";
 		};
@@ -412,6 +425,7 @@
 				DEVELOPMENT_TEAM = 3FD7AHY7SL;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MIB/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -443,6 +457,7 @@
 				DEVELOPMENT_TEAM = 3FD7AHY7SL;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MIB/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

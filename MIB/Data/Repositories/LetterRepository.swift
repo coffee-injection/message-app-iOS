@@ -54,4 +54,8 @@ class LetterRepository: LetterRepositoryProtocol {
     func deleteLetter(id: String) async throws {
         // 협의?
     }
+    
+    func reportLetter(id: String) async throws {
+        try await apiService.reportLetter()
+    }
 }

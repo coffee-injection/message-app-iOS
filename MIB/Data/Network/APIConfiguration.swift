@@ -9,7 +9,7 @@ import Foundation
 
 enum APIConfiguration {
     static let baseURL: String = {
-        return "https://server.com" //서버 주소 변경 필요
+        return "http://localhost:8080"
     }()
     
     // MARK: - API Endpoints

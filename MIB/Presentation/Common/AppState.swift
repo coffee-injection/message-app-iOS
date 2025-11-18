@@ -12,11 +12,35 @@ import SwiftUI
 class AppState: ObservableObject {
     static let shared = AppState()
     
+    // MARK: - Services
     let kakaoAuthService: KakaoAuthService
+    let authRepository: AuthRepository
+    
+    // MARK: - UseCases
+    let signInWithGoogleUseCase: SignInWithGoogleUseCase
+    let signInWithKakaoUseCase: SignInWithKakaoUseCase
+    let completeSignupUseCase: CompleteSignupUseCase
     
     private init() {
-        self.kakaoAuthService = KakaoAuthService(
-            apiService: KakaoAuthAPIService()
+        // Services 초기화
+        let kakaoAuthAPIService = KakaoAuthAPIService()
+        self.kakaoAuthService = KakaoAuthService(apiService: kakaoAuthAPIService)
+        
+        self.authRepository = AuthRepository(
+            googleSignInService: GoogleSignInService(),
+            kakaoAuthService: kakaoAuthService,
+            kakaoAuthAPIService: kakaoAuthAPIService
+        )
+        
+        // UseCases 초기화
+        self.signInWithGoogleUseCase = SignInWithGoogleUseCase(
+            authRepository: authRepository
+        )
+        self.signInWithKakaoUseCase = SignInWithKakaoUseCase(
+            authRepository: authRepository
+        )
+        self.completeSignupUseCase = CompleteSignupUseCase(
+            authRepository: authRepository
         )
     }
     

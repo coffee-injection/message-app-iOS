@@ -56,6 +56,9 @@ struct MainView: View {
         .sheet(isPresented: $viewModel.showingProfile) {
             ProfileView()
         }
+        .task {
+            await viewModel.loadLettersIfNeeded()
+        }
     }
     
     // MARK: - View Builders
@@ -78,6 +81,7 @@ struct MainView: View {
                     .font(.system(size: 40))
                     .foregroundColor(.gray.opacity(0.3))
             }
+            .padding(.leading, 50)
             
             Text(viewModel.islandName)
                 .font(.title3)
@@ -101,15 +105,29 @@ struct MainView: View {
     
     @ViewBuilder
     private var bottleListView: some View {
-        HStack(spacing: 20) {
-            ForEach(viewModel.bottles, id: \.id) { bottle in
-                Button(action: {
-                    viewModel.openBottle(bottle)
-                }) {
-                    Image("bottle")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 60, height: 90)
+        if viewModel.isLoadingLetters {
+            ProgressView()
+                .progressViewStyle(.circular)
+                .tint(.white)
+        } else if let errorMessage = viewModel.letterErrorMessage {
+            Text("불러오기 실패: \(errorMessage)")
+                .font(.callout)
+                .foregroundColor(.white)
+        } else if viewModel.bottles.isEmpty {
+            Text("도착한 편지가 없어요")
+                .font(.headline)
+                .foregroundColor(.white.opacity(0.8))
+        } else {
+            HStack(spacing: 20) {
+                ForEach(viewModel.bottles) { bottle in
+                    Button(action: {
+                        viewModel.openBottle(bottle)
+                    }) {
+                        Image("bottle")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 60, height: 90)
+                    }
                 }
             }
         }

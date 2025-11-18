@@ -25,6 +25,7 @@ class SignInWithGoogleUseCase: SignInWithGoogleUseCaseProtocol {
 
 struct AuthResult {
     let isSuccess: Bool
+    let isNewMember: Bool
     let user: AuthUser?
     let error: Error?
 }

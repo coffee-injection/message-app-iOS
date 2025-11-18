@@ -17,4 +17,5 @@ protocol LetterRepositoryProtocol {
     func bookmarkLetter(id: String) async throws
     func unbookmarkLetter(id: String) async throws
     func deleteLetter(id: String) async throws
+    func reportLetter(id: String) async throws
 }

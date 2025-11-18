@@ -15,14 +15,12 @@ class BookmarkViewModel: ObservableObject {
     @Published var errorMessage: String?
     
     private let getBookmarkedLettersUseCase: GetBookmarkedLettersUseCase
-    private let deleteLetterUseCase: DeleteLetterUseCase
     
     init(
         getBookmarkedLettersUseCase: GetBookmarkedLettersUseCase,
-        deleteLetterUseCase: DeleteLetterUseCase
+        deleteLetterUseCase: DeleteLetterUseCase? = nil
     ) {
         self.getBookmarkedLettersUseCase = getBookmarkedLettersUseCase
-        self.deleteLetterUseCase = deleteLetterUseCase
     }
     
     func loadLetters() async {
@@ -39,12 +37,7 @@ class BookmarkViewModel: ObservableObject {
     }
     
     func deleteLetter(id: String) async {
-        do {
-            try await deleteLetterUseCase.execute(letterId: id)
-            await loadLetters()
-        } catch {
-            errorMessage = error.localizedDescription
-        }
+        print("편지 삭제 버튼 클릭됨: \(id)")
     }
     
     func goBack() {

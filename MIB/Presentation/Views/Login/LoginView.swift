@@ -11,13 +11,16 @@ import GoogleSignIn
 import GoogleSignInSwift
 
 struct LoginView: View {
-    @StateObject private var viewModel = LoginViewModel(
-        signInWithGoogleUseCase: SignInWithGoogleUseCase(
-            authRepository: AuthRepository(
-                googleSignInService: GoogleSignInService()
-            )
-        )
-    )
+    @EnvironmentObject private var appState: AppState
+    @StateObject private var viewModel: LoginViewModel
+    
+    init() {
+        let appState = AppState.shared
+        _viewModel = StateObject(wrappedValue: LoginViewModel(
+            signInWithGoogleUseCase: appState.signInWithGoogleUseCase,
+            signInWithKakaoUseCase: appState.signInWithKakaoUseCase
+        ))
+    }
     
     var body: some View {
         NavigationStack {
@@ -35,6 +38,24 @@ struct LoginView: View {
             }
             .navigationDestination(isPresented: $viewModel.isLoggedIn) {
                 MainView()
+            }
+            .navigationDestination(isPresented: $viewModel.needsNicknameSetup) {
+                NicknameSetupView(
+                    completeSignupUseCase: appState.completeSignupUseCase,
+                    onCompleted: {
+                        viewModel.handleNicknameSetupCompletion()
+                    },
+                    onCancelled: {
+                        viewModel.cancelNicknameSetup()
+                    }
+                )
+            }
+            .alert("오류", isPresented: $viewModel.showingError) {
+                Button("확인", role: .cancel) {
+                    viewModel.errorMessage = nil
+                }
+            } message: {
+                Text(viewModel.errorMessage ?? "오류가 발생했습니다.")
             }
             .toolbarBackground(Color("navy_main"), for: .navigationBar)
         }
@@ -69,6 +90,7 @@ struct LoginView: View {
             emailTextField
             continueButton
             dividerView
+            kakaoSignInButton
             googleSignInButton
             appleSignInButton
         }
@@ -133,6 +155,30 @@ struct LoginView: View {
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 8)
+    }
+    
+    @ViewBuilder
+    private var kakaoSignInButton: some View {
+        Button(action: {
+            Task {
+                await viewModel.signInWithKakao()
+            }
+        }) {
+            HStack {
+                Image(systemName: "message.fill")
+                    .font(.system(size: 16))
+                Text("카카오로 시작하기")
+                    .font(.headline)
+            }
+            .foregroundColor(.black)
+            .frame(maxWidth: .infinity)
+            .frame(height: 40)
+            .background(Color(red: 1.0, green: 0.9, blue: 0.0))
+            .cornerRadius(12)
+        }
+        .padding(.horizontal, 20)
+        .disabled(viewModel.isLoading)
+        .opacity(viewModel.isLoading ? 0.6 : 1.0)
     }
     
     @ViewBuilder

@@ -16,11 +16,19 @@ class WriteLetterViewModel: ObservableObject {
     @Published var errorMessage: String?
     
     private let sendLetterUseCase: SendLetterUseCase
+    private let tokenManager: TokenManager
     
-    init(sendLetterUseCase: SendLetterUseCase? = nil) {
-        // TODO: 의존성 주입으로 실제 UseCase 받기
-        // 임시로 nil을 받아서 실제 구현 시 주입 필요
-        self.sendLetterUseCase = sendLetterUseCase ?? DummySendLetterUseCase()
+    init(
+        sendLetterUseCase: SendLetterUseCase? = nil,
+        tokenManager: TokenManager = .shared
+    ) {
+        if let sendLetterUseCase {
+            self.sendLetterUseCase = sendLetterUseCase
+        } else {
+            let repository = LetterRepository(apiService: LetterAPIService())
+            self.sendLetterUseCase = SendLetterUseCase(repository: repository)
+        }
+        self.tokenManager = tokenManager
     }
     
     func close() {
@@ -38,6 +46,13 @@ class WriteLetterViewModel: ObservableObject {
         errorMessage = nil
         showingError = false
         
+        guard tokenManager.getAuthorizationHeader() != nil else {
+            errorMessage = "로그인이 필요합니다."
+            showingError = true
+            isSending = false
+            return
+        }
+        
         do {
             let letter = try await sendLetterUseCase.execute(content: letterContent)
             print("편지 전송 성공: \(letter.id)")
@@ -49,29 +64,5 @@ class WriteLetterViewModel: ObservableObject {
         
         isSending = false
     }
-}
-
-// 임시 Dummy UseCase
-private class DummySendLetterUseCase: SendLetterUseCase {
-    init() {
-        super.init(repository: DummyLetterRepository())
-    }
-}
-
-private class DummyLetterRepository: LetterRepositoryProtocol {
-    func getMyLetters() async throws -> [Letter] { return [] }
-    func getReadableLetters() async throws -> [Letter] { return [] }
-    func getBookmarkedLetters() async throws -> [Letter] { return [] }
-    func getLetter(id: String) async throws -> Letter {
-        throw NSError(domain: "Dummy", code: -1)
-    }
-    func sendLetter(content: String) async throws -> Letter {
-        // 실제 API 호출 대신 성공으로 처리
-        return Letter(content: content, sender: "User")
-    }
-    func markAsRead(id: String) async throws {}
-    func bookmarkLetter(id: String) async throws {}
-    func unbookmarkLetter(id: String) async throws {}
-    func deleteLetter(id: String) async throws {}
 }
 

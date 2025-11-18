@@ -26,7 +26,10 @@ struct KakaoLoginResponseDTO: Codable {
 }
 
 struct KakaoLoginDataDTO: Codable {
-    let token: String?
-    let refreshToken: String?
-    let isNewMember: Bool?
+    let accessToken: String
+    let tokenType: String
+    let expiresIn: Int64
+    let memberId: Int64?
+    let email: String
+    let isNewMember: Bool
 }

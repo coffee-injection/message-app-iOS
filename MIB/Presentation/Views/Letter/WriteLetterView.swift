@@ -80,7 +80,7 @@ struct WriteLetterView: View {
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundColor(.white)
                     
-                    Text("Send into the sea")
+                    Text("바다로 보내기")
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundColor(.white)
                 }

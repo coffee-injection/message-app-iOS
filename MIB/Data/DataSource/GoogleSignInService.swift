@@ -23,6 +23,7 @@ class GoogleSignInService {
             
             return AuthResult(
                 isSuccess: true,
+                isNewMember: false,
                 user: AuthUser(
                     id: user.userID ?? "",
                     email: user.profile?.email ?? "",
@@ -33,6 +34,7 @@ class GoogleSignInService {
         } catch {
             return AuthResult(
                 isSuccess: false,
+                isNewMember: false,
                 user: nil,
                 error: error
             )

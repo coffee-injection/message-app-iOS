@@ -15,11 +15,25 @@ class LoginViewModel: ObservableObject {
     @Published var email = ""
     @Published var isLoading = false
     @Published var errorMessage: String?
+    @Published var showingError = false
+    @Published var needsNicknameSetup = false
     
     private let signInWithGoogleUseCase: SignInWithGoogleUseCaseProtocol
+    private let signInWithKakaoUseCase: SignInWithKakaoUseCaseProtocol
+    private let tokenManager: TokenManager
     
-    init(signInWithGoogleUseCase: SignInWithGoogleUseCaseProtocol) {
+    init(
+        signInWithGoogleUseCase: SignInWithGoogleUseCaseProtocol,
+        signInWithKakaoUseCase: SignInWithKakaoUseCaseProtocol,
+        tokenManager: TokenManager = .shared
+    ) {
         self.signInWithGoogleUseCase = signInWithGoogleUseCase
+        self.signInWithKakaoUseCase = signInWithKakaoUseCase
+        self.tokenManager = tokenManager
+        
+        if tokenManager.getAccessToken() != nil {
+            isLoggedIn = true
+        }
     }
     
     func continueWithEmail() {
@@ -45,6 +59,53 @@ class LoginViewModel: ObservableObject {
 //        }
 //        
 //        isLoading = false
+    }
+    
+    func signInWithKakao() async {
+        isLoading = true
+        errorMessage = nil
+        showingError = false
+        needsNicknameSetup = false
+        
+        do {
+            let result = try await signInWithKakaoUseCase.execute()
+            if result.isSuccess {
+                if result.isNewMember {
+                    needsNicknameSetup = true
+                } else {
+                    await handleLoginSuccess()
+                }
+            } else {
+                errorMessage = result.error?.localizedDescription ?? "카카오 로그인에 실패했습니다"
+                showingError = true
+            }
+        } catch {
+            errorMessage = error.localizedDescription
+            showingError = true
+        }
+        
+        isLoading = false
+    }
+    
+    func handleNicknameSetupCompletion() {
+        needsNicknameSetup = false
+        Task {
+            await handleLoginSuccess()
+        }
+    }
+    
+    func cancelNicknameSetup() {
+        needsNicknameSetup = false
+        tokenManager.clearToken()
+    }
+    
+    private func handleLoginSuccess() async {
+        if let header = tokenManager.getAuthorizationHeader() {
+            print("[LoginViewModel] 저장된 토큰 확인: \(header)")
+        } else {
+            print("[LoginViewModel] 저장된 토큰이 없습니다")
+        }
+        isLoggedIn = true
     }
     
     func signInWithApple(result: Result<ASAuthorization, Error>) {
