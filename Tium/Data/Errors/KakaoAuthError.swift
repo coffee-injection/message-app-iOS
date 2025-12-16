@@ -29,4 +29,3 @@ enum KakaoAuthError: Error, LocalizedError {
         }
     }
 }
-

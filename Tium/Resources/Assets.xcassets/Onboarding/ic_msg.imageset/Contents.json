@@ -1,15 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "bottle.png",
+      "filename" : "ic_msg.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "ic_msg 1.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "ic_msg 2.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

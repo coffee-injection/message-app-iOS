@@ -27,13 +27,18 @@ struct LoginView: View {
             ZStack {
                 backgroundColor
                 
-                VStack(spacing: 24) {
+                VStack(spacing: 0) {
                     Spacer()
-                    titleSection
+                    
+                    topSection
+                    
                     Spacer()
-                    inputSection
-                    Spacer()
+                    
+                    loginButtonsSection
+                    
                     footerText
+                        .padding(.top, 24)
+                        .padding(.bottom, 40)
                 }
             }
             .navigationDestination(isPresented: $viewModel.isLoggedIn) {
@@ -57,7 +62,7 @@ struct LoginView: View {
             } message: {
                 Text(viewModel.errorMessage ?? "오류가 발생했습니다.")
             }
-            .toolbarBackground(Color("navy_main"), for: .navigationBar)
+            .toolbarBackground(Color.clear, for: .navigationBar)
         }
     }
     
@@ -65,96 +70,42 @@ struct LoginView: View {
     
     @ViewBuilder
     private var backgroundColor: some View {
-        Color("navy_main")
+        Color("sky_1")
             .ignoresSafeArea()
     }
     
     @ViewBuilder
-    private var titleSection: some View {
-        VStack(spacing: 8) {
-            Text("계정 만들기")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-                .foregroundColor(.white)
+    private var topSection: some View {
+        VStack(spacing: 16) {
+            Image("ic_island_daytime")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 120, height: 120)
             
-            Text("앱 가입하세요")
-                .font(.body)
-                .foregroundColor(.white)
-                .multilineTextAlignment(.center)
+            Text("Tium")
+                .font(.system(size: 32, weight: .bold))
+                .foregroundColor(.black)
+            
+            VStack(spacing: 4) {
+                Text("바다 위 섬들 사이로")
+                    .font(.system(size: 16))
+                    .foregroundColor(.black.opacity(0.7))
+                
+                Text("당신의 이야기를 띄워보세요")
+                    .font(.system(size: 16))
+                    .foregroundColor(.black.opacity(0.7))
+            }
         }
     }
     
     @ViewBuilder
-    private var inputSection: some View {
-        VStack(spacing: 16) {
-            emailTextField
-            continueButton
-            dividerView
-            kakaoSignInButton
+    private var loginButtonsSection: some View {
+        VStack(spacing: 12) {
             googleSignInButton
+            kakaoSignInButton
             appleSignInButton
         }
-    }
-    
-    @ViewBuilder
-    private var emailTextField: some View {
-        TextField("email@domain.com", text: $viewModel.email)
-            .textFieldStyle(PlainTextFieldStyle())
-            .keyboardType(.emailAddress)
-            .autocapitalization(.none)
-            .disableAutocorrection(true)
-            .foregroundColor(.black)
-            .padding()
-            .background(Color.white)
-            .cornerRadius(12)
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-            )
-            .padding(.horizontal, 20)
-    }
-    
-    @ViewBuilder
-    private var continueButton: some View {
-        Button(action: {
-            viewModel.continueWithEmail()
-        }) {
-            Text("계속")
-                .font(.headline)
-                .fontWeight(.semibold)
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity)
-                .frame(height: 50)
-                .background(
-                    LinearGradient(
-                        gradient: Gradient(colors: [Color("navy_1"), Color("navy_2")]),
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                )
-                .cornerRadius(12)
-                .padding(.horizontal, 20)
-        }
-    }
-    
-    @ViewBuilder
-    private var dividerView: some View {
-        HStack {
-            Rectangle()
-                .fill(Color.gray.opacity(0.5))
-                .frame(height: 1)
-            
-            Text("또는")
-                .font(.caption)
-                .foregroundColor(.gray)
-                .padding(.horizontal, 16)
-            
-            Rectangle()
-                .fill(Color.gray.opacity(0.5))
-                .frame(height: 1)
-        }
         .padding(.horizontal, 20)
-        .padding(.vertical, 8)
     }
     
     @ViewBuilder
@@ -164,38 +115,43 @@ struct LoginView: View {
                 await viewModel.signInWithKakao()
             }
         }) {
-            HStack {
+            HStack(spacing: 12) {
                 Image(systemName: "message.fill")
-                    .font(.system(size: 16))
-                Text("카카오로 시작하기")
-                    .font(.headline)
+                    .font(.system(size: 18))
+                Text("카카오로 계속하기")
+                    .font(.system(size: 16, weight: .medium))
             }
             .foregroundColor(.black)
             .frame(maxWidth: .infinity)
-            .frame(height: 40)
+            .frame(height: 56)
             .background(Color(red: 1.0, green: 0.9, blue: 0.0))
             .cornerRadius(12)
         }
-        .padding(.horizontal, 20)
         .disabled(viewModel.isLoading)
         .opacity(viewModel.isLoading ? 0.6 : 1.0)
     }
     
     @ViewBuilder
     private var googleSignInButton: some View {
-        GoogleSignInButton(
-            scheme: .light,
-            style: .wide,
-            state: .normal,
-            action: {
-                Task {
-                    await viewModel.signInWithGoogle()
-                }
+        Button(action: {
+            Task {
+                await viewModel.signInWithGoogle()
             }
-        )
-        .frame(height: 40)
-        .cornerRadius(12)
-        .padding(.horizontal, 20)
+        }) {
+            HStack(spacing: 12) {
+                Image("ic_google")
+                    .font(.system(size: 18))
+                Text("Google로 계속하기")
+                    .font(.system(size: 16, weight: .medium))
+            }
+            .foregroundColor(.black)
+            .frame(maxWidth: .infinity)
+            .frame(height: 56)
+            .background(.white)
+            .cornerRadius(12)
+        }
+        .disabled(viewModel.isLoading)
+        .opacity(viewModel.isLoading ? 0.6 : 1.0)
     }
     
     @ViewBuilder
@@ -208,23 +164,22 @@ struct LoginView: View {
                 viewModel.signInWithApple(result: result)
             }
         )
-        .signInWithAppleButtonStyle(.white)
-        .frame(height: 40)
+        .signInWithAppleButtonStyle(.black)
+        .frame(height: 56)
         .cornerRadius(12)
-        .padding(.horizontal, 20)
     }
     
     @ViewBuilder
     private var footerText: some View {
-        Text("서비스 이용 약관 및 개인정보 처리방침에 동의~~")
-            .font(.caption)
-            .foregroundColor(.gray)
+        Text("계속 진행하려면 개인정보 처리방침 및 이용약관에 동의하는 것으로 간주됩니다.")
+            .font(.system(size: 12))
+            .foregroundColor(.black.opacity(0.5))
             .multilineTextAlignment(.center)
             .padding(.horizontal, 40)
-            .padding(.bottom, 20)
     }
 }
 
 #Preview {
     LoginView()
+        .environmentObject(AppState.shared)
 }
