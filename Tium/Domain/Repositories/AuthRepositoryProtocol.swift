@@ -12,6 +12,6 @@ protocol AuthRepositoryProtocol {
     func signInWithKakao() async throws -> AuthResult
     func signInWithApple() async throws -> AuthResult
     func signInWithEmail(email: String) async throws -> AuthResult
-    func completeSignup(nickname: String) async throws -> AuthResult
+    func completeSignup(requestDTO: CompleteSignupRequestDTO) async throws -> AuthResult
     func logout() async throws
 }

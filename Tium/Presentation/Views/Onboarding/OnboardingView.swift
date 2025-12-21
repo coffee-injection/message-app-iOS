@@ -17,16 +17,8 @@ struct OnboardingView: View {
     
     var body: some View {
         ZStack {
-            RadialGradient(
-                gradient: Gradient(stops: [
-                    .init(color: Color(hex: "3B82F6").opacity(0.3), location: 0),
-                    .init(color: Color(hex: "000000").opacity(0), location: 1)
-                ]),
-                center: .topLeading,
-                startRadius: 0,
-                endRadius: 800
-            )
-            .ignoresSafeArea()
+            BackgroundSkyColor()
+                .ignoresSafeArea()
             
             VStack(spacing: 0) {
                 Spacer()
@@ -127,16 +119,7 @@ struct OnboardingView: View {
             .foregroundColor(.white)
             .frame(maxWidth: .infinity)
             .frame(height: 56)
-            .background(
-                LinearGradient(
-                    gradient: Gradient(colors: [
-                        Color(hex: "2B7FFF"),
-                        Color(hex: "00B8DB")
-                    ]),
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
-            )
+            .background(LinearGradient.primaryGradient)
             .cornerRadius(12)
         }
     }

@@ -25,8 +25,9 @@ struct LoginView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                backgroundColor
-                
+                BackgroundSkyColor()
+                    .ignoresSafeArea()
+
                 VStack(spacing: 0) {
                     Spacer()
                     
@@ -67,13 +68,7 @@ struct LoginView: View {
     }
     
     // MARK: - View Builders
-    
-    @ViewBuilder
-    private var backgroundColor: some View {
-        Color("sky_1")
-            .ignoresSafeArea()
-    }
-    
+        
     @ViewBuilder
     private var topSection: some View {
         VStack(spacing: 16) {
@@ -140,7 +135,9 @@ struct LoginView: View {
         }) {
             HStack(spacing: 12) {
                 Image("ic_google")
-                    .font(.system(size: 18))
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 20, height: 20)
                 Text("Google로 계속하기")
                     .font(.system(size: 16, weight: .medium))
             }

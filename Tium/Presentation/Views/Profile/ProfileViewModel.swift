@@ -23,6 +23,14 @@ class ProfileViewModel: ObservableObject {
         print("설정 메뉴 버튼 클릭")
     }
     
+    func showPrivacyPolicy() {
+        print("개인정보 처리방침 버튼 클릭")
+    }
+    
+    func showTermsOfService() {
+        print("이용약관 버튼 클릭")
+    }
+    
     func logout() {
         print("로그아웃 버튼 클릭")
     }

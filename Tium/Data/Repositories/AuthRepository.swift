@@ -38,8 +38,8 @@ class AuthRepository: AuthRepositoryProtocol {
         throw AuthError.signInFailed
     }
     
-    func completeSignup(nickname: String) async throws -> AuthResult {
-        let responseDTO = try await kakaoAuthAPIService.completeSignup(nickname: nickname)
+    func completeSignup(requestDTO: CompleteSignupRequestDTO) async throws -> AuthResult {
+        let responseDTO = try await kakaoAuthAPIService.completeSignup(requestDTO: requestDTO)
         
         guard let loginData = responseDTO.data else {
             throw AuthError.signInFailed
@@ -65,5 +65,6 @@ class AuthRepository: AuthRepositoryProtocol {
     
     func logout() async throws {
         TokenManager.shared.clearToken()
+        UserProfileManager.shared.clearProfile()
     }
 }

@@ -8,7 +8,7 @@
 import Foundation
 
 protocol CompleteSignupUseCaseProtocol {
-    func execute(nickname: String) async throws -> AuthResult
+    func execute(requestDTO: CompleteSignupRequestDTO) async throws -> AuthResult
 }
 
 class CompleteSignupUseCase: CompleteSignupUseCaseProtocol {
@@ -18,8 +18,8 @@ class CompleteSignupUseCase: CompleteSignupUseCaseProtocol {
         self.authRepository = authRepository
     }
     
-    func execute(nickname: String) async throws -> AuthResult {
-        return try await authRepository.completeSignup(nickname: nickname)
+    func execute(requestDTO: CompleteSignupRequestDTO) async throws -> AuthResult {
+        return try await authRepository.completeSignup(requestDTO: requestDTO)
     }
 }
 

@@ -9,14 +9,16 @@ import SwiftUI
 
 struct MainView: View {
     @StateObject private var viewModel = MainViewModel()
+    @State private var islandOffset: CGFloat = 0
     
     var body: some View {
         ZStack {
             backgroundImage
             
-            VStack {
+            VStack(spacing: 0) {
                 headerView
                 Spacer()
+                islandView
                 bottleListView
                 Spacer()
                     .frame(height: 200)
@@ -49,7 +51,6 @@ struct MainView: View {
             }
         }
         .navigationBarBackButtonHidden(true)
-        .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $viewModel.showingBookmark) {
             BookmarkView()
         }
@@ -65,7 +66,7 @@ struct MainView: View {
     
     @ViewBuilder
     private var backgroundImage: some View {
-        Image("main_background")
+        Image("bg_daytime")
             .resizable()
             .aspectRatio(contentMode: .fill)
             .ignoresSafeArea()
@@ -77,30 +78,68 @@ struct MainView: View {
             Button(action: {
                 viewModel.showProfile()
             }) {
-                Image(systemName: "person.circle.fill")
-                    .font(.system(size: 40))
-                    .foregroundColor(.gray.opacity(0.3))
+                ZStack {
+                    RoundedRectangle(cornerRadius: 20)
+                        .fill(Color.white.opacity(0.9))
+                        .frame(width: 60, height: 60)
+                        .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
+                        .shadow(color: .black.opacity(0.1), radius: 16, x: 0, y: 8)
+                    
+                    Text("🌸")
+                        .font(.system(size: 32))
+                }
             }
-            .padding(.leading, 50)
             
-            Text(viewModel.islandName)
-                .font(.title3)
-                .fontWeight(.bold)
-                .foregroundColor(.black)
-            
+            VStack(alignment: .leading, spacing: 4) {
+                Text(viewModel.islandName)
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundColor(.white)
+                
+                HStack(spacing: 8) {
+                    Text(Date().toKoreanMonthDay())
+                        .font(.system(size: 12))
+                        .foregroundColor(.white.opacity(0.9))
+                    
+                    Circle()
+                        .fill(Color.white.opacity(0.9))
+                        .frame(width: 2, height: 2)
+                    
+                    Text("받은 메시지 2개")
+                        .font(.system(size: 12))
+                        .foregroundColor(.white.opacity(0.9))
+                }
+            }
             Spacer()
-            
-            Button(action: {
-                viewModel.showBookmark()
-            }) {
-                Image(systemName: "bookmark")
-                    .font(.title2)
-                    .foregroundStyle(.black)
-            }
         }
-        .padding(.horizontal, 20)
-        .padding(.top, 10)
-        .padding(.bottom, 10)
+        .padding(.leading, 56 + 20)
+    }
+    
+    @ViewBuilder
+    private var islandView: some View {
+        Image("ic_island_daytime")
+            .overlay {
+                Text("도마도")
+                    .font(.system(size: 20, weight: .regular))
+                    .foregroundColor(.black)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 10)
+                    .background(
+                        RoundedRectangle(cornerRadius: 30)
+                            .fill(Color.white.opacity(0.95))
+                            .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
+                            .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
+                    )
+                    .offset(y: 120)
+            }
+            .offset(y: islandOffset)
+            .onAppear {
+                withAnimation(
+                    Animation.easeInOut(duration: 1.0)
+                        .repeatForever(autoreverses: true)
+                ) {
+                    islandOffset = -10
+                }
+            }
     }
     
     @ViewBuilder
@@ -123,7 +162,7 @@ struct MainView: View {
                     Button(action: {
                         viewModel.openBottle(bottle)
                     }) {
-                        Image("bottle")
+                        Image("ic_bottle")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 60, height: 90)
@@ -142,14 +181,13 @@ struct MainView: View {
                 Button(action: {
                     viewModel.showWriteLetter()
                 }) {
-                    Image("floatingButton")
+                    Image("ic_floating_write")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(width: 56, height: 56)
+                        .frame(width: 100, height: 100)
                 }
             }
             .padding(.trailing, 56 + 20)
-            .padding(.bottom, 30)
         }
     }
 }

@@ -107,12 +107,11 @@ class KakaoAuthAPIService {
         return responseDTO
     }
     
-    func completeSignup(nickname: String) async throws -> KakaoLoginResponseDTO {
+    func completeSignup(requestDTO: CompleteSignupRequestDTO) async throws -> KakaoLoginResponseDTO {
         let url = URL(string: APIConfiguration.Auth.signupComplete)!
         var request = createRequest(url: url, method: "POST", requiresAuth: true)
         
-        let body = ["nickname": nickname]
-        request.httpBody = try JSONSerialization.data(withJSONObject: body)
+        request.httpBody = try JSONEncoder().encode(requestDTO)
         
         print("[API Request] POST \(url.absoluteString)")
         print("Headers: \(request.allHTTPHeaderFields ?? [:])")
